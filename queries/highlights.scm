@@ -1,3 +1,84 @@
+; Baseline: same node types as tree-sitter-css (SCSS is a superset of CSS in this grammar).
+(comment) @comment
+
+(tag_name) @tag
+(nesting_selector) @tag
+(universal_selector) @tag
+
+"~" @operator
+">" @operator
+"+" @operator
+"-" @operator
+"*" @operator
+"/" @operator
+"=" @operator
+"^=" @operator
+"|=" @operator
+"~=" @operator
+"$=" @operator
+"*=" @operator
+
+"and" @operator
+"or" @operator
+"not" @operator
+"only" @operator
+
+(attribute_selector (plain_value) @string)
+
+((property_name) @variable
+ (#match? @variable "^--"))
+((plain_value) @variable
+ (#match? @variable "^--"))
+
+(class_name) @property
+(id_name) @property
+(namespace_name) @property
+(property_name) @property
+(feature_name) @property
+
+(pseudo_element_selector (tag_name) @attribute)
+(pseudo_class_selector (class_name) @attribute)
+(attribute_name) @attribute
+
+(function_name) @function
+
+"@media" @keyword
+"@import" @keyword
+"@charset" @keyword
+"@namespace" @keyword
+"@supports" @keyword
+"@keyframes" @keyword
+(at_keyword) @keyword
+(to) @keyword
+(from) @keyword
+(important) @keyword
+
+(string_value) @string
+(color_value) @string.special
+
+(integer_value) @number
+(float_value) @number
+(unit) @type
+
+[
+  "#"
+  ","
+  "."
+  ":"
+  "::"
+  ";"
+] @punctuation.delimiter
+
+[
+  "{"
+  ")"
+  "("
+  "}"
+] @punctuation.bracket
+
+; SCSS line comments (// …)
+(js_comment) @comment @spell
+
 [
   "@at-root"
   "@debug"
@@ -24,10 +105,6 @@
   "in"
 ] @keyword.repeat
 
-(js_comment) @comment @spell
-
-(function_name) @function
-
 [
   ">="
   "<="
@@ -47,7 +124,9 @@
   (parameters
     (parameter) @variable.parameter))
 
-(plain_value) @string
+; Values (avoid clashing with CSS custom-property --* plain_value → @variable above)
+((plain_value) @string
+ (#not-match? @string "^--"))
 
 (keyword_query) @function
 
