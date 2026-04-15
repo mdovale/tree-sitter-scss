@@ -1,4 +1,5 @@
 // swift-tools-version:5.3
+
 import PackageDescription
 
 let package = Package(
@@ -6,42 +7,32 @@ let package = Package(
     products: [
         .library(name: "TreeSitterSCSS", targets: ["TreeSitterSCSS"]),
     ],
-    dependencies: [],
-    targets: [
-        .target(name: "TreeSitterSCSS",
-                path: ".",
-                exclude: [
-                    "Cargo.toml",
-                    "Makefile",
-                    "binding.gyp",
-                    "bindings/c",
-                    "bindings/go",
-                    "bindings/node",
-                    "bindings/python",
-                    "bindings/rust",
-                    "prebuilds",
-                    "grammar.js",
-                    "package.json",
-                    "package-lock.json",
-                    "pyproject.toml",
-                    "setup.py",
-                    "test",
-                    "examples",
-                    ".editorconfig",
-                    ".github",
-                    ".gitignore",
-                    ".gitattributes",
-                    ".gitmodules",
-                ],
-                sources: [
-                    "src/parser.c",
-                    "src/scanner.c",
-                ],
-                resources: [
-                    .copy("queries")
-                ],
-                publicHeadersPath: "bindings/swift",
-                cSettings: [.headerSearchPath("src")])
+    dependencies: [
+        .package(name: "SwiftTreeSitter", url: "https://github.com/tree-sitter/swift-tree-sitter", from: "0.9.0"),
     ],
-    cLanguageStandard: .c11
+    targets: [
+        .target(
+            name: "TreeSitterSCSS",
+            dependencies: [],
+            path: ".",
+            sources: [
+                "src/parser.c",
+                "src/scanner.c",
+            ],
+            resources: [
+                .copy("queries"),
+            ],
+            publicHeadersPath: "bindings/swift",
+            cSettings: [.headerSearchPath("src")],
+        ),
+        .testTarget(
+            name: "TreeSitterSCSSTests",
+            dependencies: [
+                "SwiftTreeSitter",
+                "TreeSitterSCSS",
+            ],
+            path: "bindings/swift/TreeSitterSCSSTests",
+        ),
+    ],
+    cLanguageStandard: .c11,
 )
